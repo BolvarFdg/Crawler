@@ -1,22 +1,14 @@
 import requests
 from bs4 import BeautifulSoup
 import urllib
-import ssl
 import os
 import re
 
-HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 '
-                  '(KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
-    'referer': 'https://www.menworld.org/mnwny/'
-}
 count = 1
 newUrls = set()
 oldUrls = set()
 
 # 下载器
-
-
 def download(url):
 
     res = requests.get(url)
@@ -35,13 +27,11 @@ def getData(linktext):
     return link['href'], images
 
 # 下载页面所有图片
-
-
 def downloadImage(savepath, images):
     global count
     for image in images:
         print('downloading : '+str(count))
-        res = requests.get(image['src'],stream=True, headers=HEADERS)
+        res = requests.get(image['src'])
         with open(savepath + str(count) + '.jpg', 'wb') as imageW:
             for dataImage in res:
                 imageW.write(dataImage)
@@ -54,22 +44,16 @@ def addUrl(link):
         newUrls.add(link)
 
 # 获取一个url
-
-
 def getUrl():
     url = newUrls.pop()
     oldUrls.add(url)
     return url
 
 # 判断知否还有新的url
-
-
 def hasUrl():
     return len(newUrls) != 0
 
 # 调度中心
-
-
 def mession(homeUrl):
     newUrls.add(homeUrl)
     while hasUrl:
@@ -84,15 +68,14 @@ def mession(homeUrl):
 
 # 在当前目录下新建文件夹
 def newDir():
-    path = os.getcwd() + '/bingCrawler/images/'
-    
+    path = os.getcwd() + '/bing/images/'
+
     if not os.path.exists(path):
         os.mkdir(path)
     return path
 
 
 if __name__ == "__main__":
-    ssl._create_default_https_context = ssl._create_unverified_context
 
     pageUrl = 'http://bing.plmeizi.com/'
     print('messsion start.....')
